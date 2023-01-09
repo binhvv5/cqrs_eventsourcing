@@ -1,0 +1,2 @@
+docker run --name postgres -p 5432:5432 --network techbankNet -e POSTGRES_PASSWORD=123456789 -d postgres
+docker run -d --network techbankNet -p 27017:27017 --name mongo mongo
