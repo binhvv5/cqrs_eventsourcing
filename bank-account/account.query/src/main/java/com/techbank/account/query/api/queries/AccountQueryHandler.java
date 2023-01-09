@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -28,7 +29,7 @@ public class AccountQueryHandler implements QueryHandler {
     public List<BaseEntity> handle(FindAccountByIdQuery query) {
         var bankAccount = accountRepository.findById(query.getId());
         if (bankAccount.isEmpty()) {
-            return null;
+            return Collections.emptyList();
         }
         List<BaseEntity> bankAccountList = new ArrayList<>();
         bankAccountList.add(bankAccount.get());
@@ -39,7 +40,7 @@ public class AccountQueryHandler implements QueryHandler {
     public List<BaseEntity> handle(FindAccountByHolderQuery query) {
         var bankAccount = accountRepository.findByAccountHolder(query.getAccountHolder());
         if (bankAccount.isEmpty()) {
-            return null;
+            return Collections.emptyList();
         }
         List<BaseEntity> bankAccountList = new ArrayList<>();
         bankAccountList.add(bankAccount.get());

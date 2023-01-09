@@ -1,10 +1,8 @@
 package com.techbank.account.cmd.domain;
 
 import com.techbank.account.cmd.api.commands.OpenAccountCommand;
-import com.techbank.account.common.events.AccountClosedEvent;
-import com.techbank.account.common.events.AccountOpenedEvent;
-import com.techbank.account.common.events.FundsDepositedEvent;
-import com.techbank.account.common.events.FundsWithdrawnEvent;
+import com.techbank.account.cmd.api.commands.UpdateAccountCommand;
+import com.techbank.account.common.events.*;
 import com.techbank.cqrs.core.domain.AggregateRoot;
 import lombok.NoArgsConstructor;
 
@@ -40,7 +38,7 @@ public class AccountAggregate extends AggregateRoot {
     }
 
     public void depositFunds(double amount) {
-        if (!this.active) {
+        if (Boolean.FALSE.equals(this.active)) {
             throw new IllegalStateException("Funds cannot be deposited into a closed account!");
         }
         if(amount <= 0) {
@@ -58,7 +56,7 @@ public class AccountAggregate extends AggregateRoot {
     }
 
     public void withdrawFunds(double amount) {
-        if (!this.active) {
+        if (Boolean.FALSE.equals(this.active)) {
             throw new IllegalStateException("Funds cannot be withdrawn from a closed account!");
         }
         raiseEvent(FundsWithdrawnEvent.builder()
@@ -73,7 +71,7 @@ public class AccountAggregate extends AggregateRoot {
     }
 
     public void closeAccount() {
-        if (!this.active) {
+        if (Boolean.FALSE.equals(this.active)) {
             throw new IllegalStateException("The bank account has already been closed!");
         }
         raiseEvent(AccountClosedEvent.builder()
@@ -84,5 +82,21 @@ public class AccountAggregate extends AggregateRoot {
     public void apply(AccountClosedEvent event) {
         this.id = event.getId();
         this.active = false;
+    }
+
+
+    public void updateAccount(UpdateAccountCommand command) {
+        if (Boolean.FALSE.equals(this.active)) {
+            throw new IllegalStateException("Cannot update a closed account!");
+        }
+        raiseEvent(AccountUpdatedEvent.builder()
+                .id(this.id)
+                .accountHolder(command.getAccountHolder())
+                .accountType(command.getAccountType())
+                .build());
+    }
+
+    public void apply(AccountUpdatedEvent event) {
+        this.id = event.getId();
     }
 }

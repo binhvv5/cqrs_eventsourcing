@@ -1,9 +1,6 @@
 package com.techbank.account.query.infrastructure.handlers;
 
-import com.techbank.account.common.events.AccountClosedEvent;
-import com.techbank.account.common.events.AccountOpenedEvent;
-import com.techbank.account.common.events.FundsDepositedEvent;
-import com.techbank.account.common.events.FundsWithdrawnEvent;
+import com.techbank.account.common.events.*;
 import com.techbank.account.query.domain.AccountRepository;
 import com.techbank.account.query.domain.BankAccount;
 import lombok.RequiredArgsConstructor;
@@ -52,5 +49,16 @@ public class AccountEventHandler implements EventHandler {
     @Override
     public void on(AccountClosedEvent event) {
         accountRepository.deleteById(event.getId());
+    }
+
+    @Override
+    public void on(AccountUpdatedEvent event) {
+        var bankAccount = accountRepository.findById(event.getId());
+        if (bankAccount.isEmpty()) {
+            return;
+        }
+        bankAccount.get().setAccountHolder(event.getAccountHolder());
+        bankAccount.get().setAccountType(event.getAccountType());
+        accountRepository.save(bankAccount.get());
     }
 }

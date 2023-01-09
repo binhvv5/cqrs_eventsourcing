@@ -39,11 +39,18 @@ public class AccountCommandHandler implements CommandHandler {
     public void handle(CloseAccountCommand command) {
         var aggregate = eventSourcingHandler.getById(command.getId());
         aggregate.closeAccount();
-        eventSourcingHandler.save((aggregate));
+        eventSourcingHandler.save(aggregate);
     }
 
     @Override
     public void handle(RestoreReadDbCommand command) {
         eventSourcingHandler.republishEvents();
+    }
+
+    @Override
+    public void handle(UpdateAccountCommand command) {
+        var aggregate = eventSourcingHandler.getById(command.getId());
+        aggregate.updateAccount(command);
+        eventSourcingHandler.save(aggregate);
     }
 }

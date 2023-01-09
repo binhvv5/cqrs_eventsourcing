@@ -53,13 +53,13 @@ public class AccountEventStore implements EventStore {
         if (eventStream == null || eventStream.isEmpty()) {
             throw new AggregateNotFoundException("Incorrect account ID provided!");
         }
-        return eventStream.stream().map(x -> x.getEventData()).collect(Collectors.toList());
+        return eventStream.stream().map(EventModel::getEventData).collect(Collectors.toList());
     }
 
     @Override
     public List<String> getAggregateIds() {
         var eventStream = eventStoreRepository.findAll();
-        if (eventStream == null || eventStream.isEmpty()) {
+        if (eventStream.isEmpty()) {
             throw new IllegalStateException("Could not retrieve event stream from the event store!");
         }
         return eventStream.stream().map(EventModel::getAggregateIdentifier).distinct().collect(Collectors.toList());

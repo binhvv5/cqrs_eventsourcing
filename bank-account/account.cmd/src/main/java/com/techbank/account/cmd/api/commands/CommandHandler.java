@@ -11,4 +11,6 @@ public interface CommandHandler {
     void handle(CloseAccountCommand command);
 
     void handle(RestoreReadDbCommand command);
+
+    void handle(UpdateAccountCommand command);
 }
